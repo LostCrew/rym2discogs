@@ -1,0 +1,50 @@
+{
+  "name": "rym2discogs",
+  "version": "0.1.0",
+  "description": "Bring your data from RYM to Discogs",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "NODE_ENV=development nodemon --exec babel-node -- src/index.js",
+    "lint": "eslint src",
+    "start": "npm-run-all lint dev"
+  },
+  "devDependencies": {
+    "babel-eslint": "^6.0.4",
+    "eslint": "^2.11.1",
+    "eslint-config-airbnb-base": "^3.0.1",
+    "eslint-plugin-import": "^1.8.1",
+    "nodemon": "^1.9.2",
+    "npm-run-all": "^2.1.1",
+    "request-promise": "^3.0.0"
+  },
+  "dependencies": {
+    "babel-cli": "^6.9.0",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-register": "^6.9.0",
+    "bluebird": "^3.4.0",
+    "csv-parse": "^1.0.1",
+    "disconnect": "^0.8.0",
+    "fast-csv": "^2.0.0",
+    "font-blast": "^0.2.2",
+    "inquirer": "^1.0.3",
+    "minimist": "^1.2.0",
+    "request": "^2.67.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/LostCrew/rym2discogs.git"
+  },
+  "keywords": [
+    "rym"
+  ],
+  "author": "Emanuele Marchi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LostCrew/rym2discogs/issues"
+  },
+  "homepage": "https://github.com/LostCrew/rym2discogs#readme",
+  "bin": {
+    "r2d": "bin/rym2discogs.js",
+    "rym2discogs": "bin/rym2discogs.js"
+  }
+}
