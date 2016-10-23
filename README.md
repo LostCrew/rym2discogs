@@ -10,6 +10,7 @@ $ npm install rym2discogs
 
 ## Usage
 
+```
 import rym2discogs from 'rym2discogs';
 
 rym2discogs({
