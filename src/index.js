@@ -58,17 +58,21 @@ export function filterByOwnership(releases, ownership = 'all') {
   ));
 }
 
-export default function (optiosn) {
+export default function (options) {
   // winston.info("Reading releases from file '%s'…", options.file);
-  return fromFile(file)
+  discogs = new Discogs(options);
+  return fromFile(options.file)
     .then(releases => filterByOwnership(releases, options.ownership))
     .then(searchAndAdd)
     .then(() => {
       if (failures.length > 0) {
         // winston.info('Could not add %d releases', failures.length);
-        // winston.debug('Failed releases:', failures.map(failure => failure.release.release_title));
+        // winston.debug(
+        //   'Failed releases:',
+        //   failures.map(failure => failure.release.release_title)
+        // );
       }
       return { failures };
-    })
+    });
     // .catch(winston.error.bind(winston));
 }

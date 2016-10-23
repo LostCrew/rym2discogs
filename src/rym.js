@@ -66,9 +66,9 @@ export function fromFile(file) {
     .then(releases => releases
       .map(validate)
       .map(convert)
-    )
-    .then(releases => {
-      winston.info('Found %d releases', releases.length);
-      return releases;
-    });
+    );
+    // .then(releases => {
+      // winston.info('Found %d releases', releases.length);
+      // return releases;
+    // });
 }
