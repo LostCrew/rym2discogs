@@ -1,27 +1,74 @@
 import Promise from 'bluebird';
-const readFile = Promise.promisify(require('fs').readFile);
-const parseCsv = Promise.promisify(require('csv-parse'));
+import { readFile } from 'fs';
+import csvParse from 'csv-parse';
+import Joi from 'joi';
+// import winston from 'winston';
 
-export default class Rym {
-  static fromExport() {  // userId
-    // return request({
-    //     url: `https://rateyourmusic.com/user_albums_export?album_list_id=${userId}&noreview`,
-    //     headers: {
-    //       'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-    //       'accept-encoding': 'gzip, deflate, sdch',
-    //       'accept-language': 'en-US,en;q=0.8,it;q=0.6',
-    //       'cache-control': 'no-cache',
-    //       'dnt': 1,
-    //       'pragma': 'no-cache',
-    //       'referer': 'https://rateyourmusic.com/~LostCrew',
-    //       'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5)' +
-    //         'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'
-    //     }
-    //   });
+
+const readFilePromise = Promise.promisify(readFile);
+const parseCsv = Promise.promisify(csvParse);
+const schema = Joi.object({
+  'RYM Album': Joi.number().integer().positive(),
+  Title: Joi.string(),
+  Release_Date: Joi.number().integer().positive(),
+  Rating: Joi.number().integer().positive().max(5)
+    .multiple(0.5),
+  Ownership: Joi.string(),
+  'Media Type': Joi.string().allow(''),
+  Review: Joi.string().allow(''),
+});
+
+
+function validate(release) {
+  return Joi.validate(schema, release, { presence: 'required' });
+}
+
+function convert(release) {
+  const artist = release['First Name'] ? `${release['First Name']} ` : release['Last Name'];
+  const title = `${artist} - ${release.Title}`;
+  let ownership = null;
+
+  switch (release.Ownership) {
+    case 'o':
+      ownership = 'collection';
+      break;
+    case 'w':
+      ownership = 'wantlist';
+      break;
+    case 'u':
+      ownership = 'past';
+      break;
+    case 'n':
+      ownership = 'none';
+      break;
+    default:
+      ownership = null;
   }
 
-  static fromFile(file) {
-    return readFile(file, 'utf8')
-      .then(csv => parseCsv(csv, { columns: true }));
-  }
+  // winston.debug("Converting RYM release '%s' to Discogs format…", title);
+  return {
+    id: release['RYM Album'],
+    title,
+    release_title: release.Title,
+    artist,
+    year: release.Release_Date,
+    rating: parseFloat(release.Rating / 2),
+    format: release['Media Type'],
+    ownership,
+    notes: release.Review,
+  };
+}
+
+// eslint-disable-next-line import/prefer-default-export
+export function fromFile(file) {
+  return readFilePromise(file, 'utf8')
+    .then(csv => parseCsv(csv, { columns: true }))
+    .then(releases => releases
+      .map(validate)
+      .map(convert)
+    )
+    .then(releases => {
+      winston.info('Found %d releases', releases.length);
+      return releases;
+    });
 }

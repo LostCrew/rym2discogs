@@ -1,52 +1,28 @@
 # Rym￫Discogs
 
-Bring your data from RateYourMusic to Discogs
+Bring your data from RateYourMusic to Discogs.
 
-## Install
+## Installation
 
 ```
-$ npm install -g rym2discogs
+$ npm install rym2discogs
 ```
 
 ## Usage
 
-You want us to grab your hand and walk you through the dark?
-Launch it and we will ask you what's needed.
-No hassle, no bullcrap.
+import rym2discogs from 'rym2discogs';
 
-```
-$ rym2discogs
-```
-
-### Options
-
-Otherwise, you can fill up your terminal with options like an atomic fungus.
-
-*RYM export file*
-
-```
-$ rym2discogs --file ./export.csv
-$ rym2discogs -f ./export.csv
+rym2discogs({
+  file: './export.csv',
+  username: 'LostCrew',
+  token: 'my-token',
+  ownership: 'all',
+  debug: 'false',
+})
+  .then(…);
 ```
 
-*RYM user ID*
+## TODO
 
-```
-rym2discogs --id
-rym2discogs -i
-```
-
-*Discogs token*
-
-```
-rym2discogs --token
-rym2discogs -t
-```
-
-*Discogs username*
-
-```
-rym2discogs --username
-rym2discogs -u
-```
-
+- Prevent addition of duplicates
+- Support for 'past' releases

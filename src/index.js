@@ -1,36 +1,64 @@
-import inquirer from 'inquirer';
-import minimist from 'minimist';
+import Promise from 'bluebird';
+// import winston from 'winston';
+import { pick } from 'lodash';
 
-import app from './app';
+import Discogs from './discogs';
+import { fromFile } from './rym';
 
-// const options = {
-//   "key": "IjnjuEmBHizfjeNVNeiw",
-//   "secret": "FsbpudFloRnnHguUUOgLePYBZkioHHri",
-//   "username": "LostCrew",
-//   "file": "./export.csv",
-//   "review2note": "false"
-// };
+const failures = [];
+let discogs;
 
-const args = minimist(process.argv.slice(2), {
-  alias: {
-    f: 'file',
-  },
-});
 
-// TODO: if missing arguments
-inquirer.prompt([{
-  name: 'rymFile',
-  message: 'Specify a RYM data export file if you want to import RYM data this way',
-  when: () => !args.file,
-}, {
-  name: 'rymId',
-  message: 'What is your RYM ID',
-  when: answers => !answers.rymFile,
-}, {
-  name: 'discogsUsername',
-  message: 'What is your username on Discogs?',
-  when: answers => !args.username,
-}, {
-  name: 'discogsToken',
-  message: 'What is your Discogs token?',
-}], app);
+function search(release) {
+  // winston.info("Searching release '%s'…", release.title);
+  return discogs.searchRelease(pick(release, ['release_title', 'artist']));
+}
+
+function rejectOnNoResults(response) {
+  if (response.pagination.items === 0) {
+    return Promise.reject('not-found');
+  }
+  return response;
+}
+
+function pickResult(response) {
+  return response.results[0];
+}
+
+function add(id, release) {
+  // winston.info("Adding release '%s' to $s…", release.title, release.ownership);
+  let method;
+  if (release.ownership === 'collection') {
+    method = 'addCollectionRelease';
+  }
+  if (release.ownership === 'wantlist') {
+    method = 'addWantlistRelease';
+  }
+  return discogs[method](id, pick(release, ['rating', 'notes']));
+}
+
+function searchAndAdd(releases) {
+  // winston.info('Searching and add releases (it may take a while)…');
+  return Promise.map(releases, release => search(release)
+    .then(rejectOnNoResults)
+    .then(pickResult)
+    .then(result => add(result.id, release))
+    .then(() => release)
+    .catch(error => { failures.push({ release, error }); }));
+}
+
+
+export default function (optiosn) {
+  // winston.info("Reading releases from file '%s'…", options.file);
+  return fromFile(file)
+    .then(releases => filterByOwnership(releases, options.ownership))
+    .then(searchAndAdd)
+    .then(() => {
+      if (failures.length > 0) {
+        // winston.info('Could not add %d releases', failures.length);
+        // winston.debug('Failed releases:', failures.map(failure => failure.release.release_title));
+      }
+      return { failures };
+    })
+    // .catch(winston.error.bind(winston));
+}
