@@ -48,6 +48,16 @@ function searchAndAdd(releases) {
 }
 
 
+export function filterByOwnership(releases, ownership = 'all') {
+  if (ownership !== 'all') {
+    return releases.filter(release => release.ownership === ownership);
+  }
+  return releases.filter(release => (
+    release.ownership === 'collection' ||
+    release.ownership === 'wantlist'
+  ));
+}
+
 export default function (optiosn) {
   // winston.info("Reading releases from file '%s'…", options.file);
   return fromFile(file)
