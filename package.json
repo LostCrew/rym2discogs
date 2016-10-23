@@ -10,7 +10,7 @@
     "build": "run-p lint compile",
     "watch": "nodemon -q -w src -x 'npm run build'",
     "dev": "run-p clean watch",
-    "test": "ava",
+    "test": "ava"
   },
   "devDependencies": {
     "ava": "^0.16.0",
