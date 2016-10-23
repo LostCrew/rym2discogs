@@ -8,13 +8,13 @@ Bring your data from RateYourMusic to Discogs.
 
 ## Installation
 
-```
+```bash
 $ npm install rym2discogs
 ```
 
 ## Usage
 
-```
+```node
 import rym2discogs from 'rym2discogs';
 
 rym2discogs({
