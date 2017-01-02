@@ -48,6 +48,9 @@ async function searchAndAdd(release) {
 }
 
 export default async function (options) {
+  if (options.verbose) {
+    winston.level = 'verbose';
+  }
   winston.verbose("Reading releases from file '%s'…", options.file);
   discogs = new Discogs(options);
   const releases = await fromFile(options.file);
