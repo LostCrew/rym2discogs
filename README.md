@@ -17,8 +17,8 @@ $ yarn add rym2discogs
 ## Usage
 
 ```node
+import { resolve } from 'path';
 import rym2discogs from 'rym2discogs';
-import { resolve } from path;
 
 const results = await rym2discogs({
   file: resolve(__dirname, 'export.csv'), // absolute path to RateYourMusic export file
