@@ -2,7 +2,7 @@ import Promise from 'bluebird';
 import { readFile } from 'fs';
 import csvParse from 'csv-parse';
 import Joi from 'joi';
-// import winston from 'winston';
+import winston from 'winston';
 
 
 const readFilePromise = Promise.promisify(readFile);
@@ -45,7 +45,6 @@ function convert(release) {
       ownership = null;
   }
 
-  // winston.debug("Converting RYM release '%s' to Discogs format…", title);
   return {
     id: release['RYM Album'],
     title,
@@ -60,15 +59,17 @@ function convert(release) {
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export function fromFile(file) {
-  return readFilePromise(file, 'utf8')
-    .then(csv => parseCsv(csv, { columns: true }))
-    .then(releases => releases
-      .map(validate)
-      .map(convert)
-    );
-    // .then(releases => {
-      // winston.info('Found %d releases', releases.length);
-      // return releases;
-    // });
+export async function fromFile(path) {
+  const csv = await readFilePromise(path, 'utf8');
+  const raw = await parseCsv(csv, {
+    columns: true,
+    skip_empty_lines: true,
+  });
+  winston.debug('raw', raw[3]);
+  winston.verbose('Found %d releases', raw.length);
+  winston.verbose('Validating RYM releases…');
+  const validated = raw.map(validate);
+  winston.verbose('Converting RYM releases to Discogs format…');
+  const releases = validated.map(convert);
+  return Promise.resolve(releases);
 }
