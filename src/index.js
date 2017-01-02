@@ -5,8 +5,8 @@ import { pick } from 'lodash';
 import Discogs from './discogs';
 import { fromFile } from './rym';
 
-let discogs;
 
+let discogs;
 
 function search(release) {
   winston.verbose("Searching release '%s'…", release.title);
@@ -15,13 +15,11 @@ function search(release) {
 
 function add(id, release) {
   winston.verbose("Adding release '%s' to $s…", release.title, release.ownership);
-  let method;
-  if (release.ownership === 'collection') {
-    method = 'addCollectionRelease';
-  }
-  if (release.ownership === 'wantlist') {
-    method = 'addWantlistRelease';
-  }
+  const methodsMap = {
+    collection: 'addCollectionRelease',
+    wantlist: 'addWantlistRelease',
+  };
+  const method = methodsMap[release.ownership];
   const options = pick(release, ['rating', 'notes']);
   return discogs[method](id, options);
 }
