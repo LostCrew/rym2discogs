@@ -39,4 +39,3 @@ test('it should filter release by ownership "collection" and "wantlist"', t => {
   t.true(onlyCollection.every(release => release.ownership === 'collection'), 'Collection');
   t.true(onlyWantlist.every(release => release.ownership === 'wantlist'), 'Wantlist');
 });
-
