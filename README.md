@@ -10,21 +10,23 @@ Bring your data from RateYourMusic to Discogs.
 
 ```bash
 $ npm install rym2discogs
+or
+$ yarn add rym2discogs
 ```
 
 ## Usage
 
 ```node
 import rym2discogs from 'rym2discogs';
+import { resolve } from path;
 
-rym2discogs({
-  file: './export.csv',
-  username: 'LostCrew',
-  token: 'my-token',
-  ownership: 'all',
-  debug: 'false',
-})
-  .then(…);
+const results = await rym2discogs({
+  file: resolve(__dirname, 'export.csv'), // absolute path to RateYourMusic export file
+  username: 'LostCrew', // Discogs username
+  token: 'discogs-token', // Discogs token
+  ownership: 'all', // 'all', 'collection', 'wantlist'
+  verbose: false // boolean
+});
 ```
 
 ## TODO
