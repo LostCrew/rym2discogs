@@ -65,8 +65,7 @@ export async function fromFile(path) {
     columns: true,
     skip_empty_lines: true,
   });
-  winston.debug('raw', raw[3]);
-  winston.verbose('Found %d releases', raw.length);
+  winston.verbose('Found %d RYM releases', raw.length);
   winston.verbose('Validating RYM releases…');
   const validated = raw.map(validate);
   winston.verbose('Converting RYM releases to Discogs format…');
