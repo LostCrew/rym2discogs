@@ -5,13 +5,14 @@
   "main": "lib",
   "scripts": {
     "clean": "rm -rf lib",
-    "compile": "babel src -d lib",
+    "compile": "babel -d lib -s inline src",
     "lint": "eslint src",
     "build": "run-p lint compile",
     "watch": "nodemon -q -w src -x 'npm run build'",
-    "dev": "run-p clean watch",
+    "start": "run-p clean watch",
     "test": "ava",
-    "coverage": "nyc --reporter=json npm test"
+    "coverage": "nyc --reporter=json npm test",
+    "prepublish": "npm test && npm run build"
   },
   "devDependencies": {
     "ava": "^0.17.0",
