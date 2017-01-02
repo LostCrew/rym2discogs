@@ -10,18 +10,20 @@
     "build": "run-p lint compile",
     "watch": "nodemon -q -w src -x 'npm run build'",
     "start": "run-p clean watch",
-    "test": "ava",
-    "coverage": "nyc --reporter=json npm test",
+    "test": "nyc ava",
+    "coverage": "nyc report --reporter=lcov | coveralls",
     "prepublish": "npm test && npm run build"
   },
   "devDependencies": {
     "ava": "^0.17.0",
     "babel-cli": "^6.18.0",
     "babel-eslint": "^7.1.1",
+    "babel-plugin-istanbul": "^3.0.0",
     "babel-plugin-transform-runtime": "^6.15.0",
     "babel-polyfill": "^6.20.0",
     "babel-preset-latest-node6": "^0.1.0",
     "babel-register": "^6.18.0",
+    "coveralls": "^2.11.15",
     "eslint": "^3.12.2",
     "eslint-config-airbnb-base": "^11.0.0",
     "eslint-plugin-ava": "^4.0.0",
@@ -58,8 +60,19 @@
   },
   "homepage": "https://github.com/LostCrew/rym2discogs#readme",
   "babel": {
-    "presets": ["latest-node6"],
-    "plugins": ["transform-runtime"]
+    "presets": [
+      "latest-node6"
+    ],
+    "plugins": [
+      "transform-runtime"
+    ],
+    "env": {
+      "test": {
+        "plugins": [
+          "instanbul"
+        ]
+      }
+    }
   },
   "eslintConfig": {
     "env": {
@@ -81,9 +94,13 @@
       "ava"
     ],
     "rules": {
-      "arrow-parens": [2, "as-needed", {
-        "requireForBlockBody": false
-      }]
+      "arrow-parens": [
+        2,
+        "as-needed",
+        {
+          "requireForBlockBody": false
+        }
+      ]
     }
   },
   "ava": {
